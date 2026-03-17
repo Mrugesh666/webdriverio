@@ -5,6 +5,11 @@ exports.config = {
     // ====================
     // WebdriverIO supports running e2e tests as well as unit and component tests.
     runner: 'local',
+    /**
+     * Force WebDriver Classic protocol (disable BiDi).
+     * This avoids `browsingContext.navigate` timeouts seen on some setups.
+     */
+    automationProtocol: 'webdriver',
     //
     // ==================
     // Specify Test Files
@@ -50,7 +55,8 @@ exports.config = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        browserName: 'chrome'
+        browserName: 'chrome',
+        'wdio:enforceWebDriverClassic': true
     }],
 
     //
@@ -155,8 +161,11 @@ exports.config = {
      * @param {object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      */
-    // onPrepare: function (config, capabilities) {
-    // },
+    onPrepare: function () {
+        const fs = require('node:fs')
+        fs.mkdirSync('./reports/junit', { recursive: true })
+        fs.mkdirSync('./allure-results', { recursive: true })
+    },
     /**
      * Gets executed before a worker process is spawned and can be used to initialize specific service
      * for that worker as well as modify runtime environments in an async fashion.
